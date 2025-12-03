@@ -1,0 +1,73 @@
+package runner;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.events.*;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.testng.annotations.*;
+import com.aventstack.extentreports.*;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import utils.EventHandler;
+
+import java.net.*;
+import java.io.*;
+import java.time.Duration;
+
+public class TestPage {
+
+    ExtentReports er;
+    ExtentTest et;
+    WebDriver d;
+
+    public String get(String sh,int r,int c)throws IOException{
+        String fp=System.getProperty("user.dir")+"/Excel/sheet.xlsx";
+        FileInputStream f=new FileInputStream(fp);
+        Workbook wb=new XSSFWorkbook(f);
+        Sheet s=wb.getSheet(sh);
+        String v=s.getRow(r).getCell(c).toString();
+        wb.close();f.close();return v;
+    }
+
+    @BeforeClass
+    void set(){
+        String p=System.getProperty("user.dir")+"/reports/TestReport.html";
+        er=new ExtentReports();
+        er.attachReporter(new ExtentSparkReporter(p));
+    }
+
+    @BeforeMethod
+    public void setup()throws MalformedURLException{
+        d=new RemoteWebDriver(new URL("http://localhost:4444"),new ChromeOptions());
+        d.manage().window().maximize();
+        d.get("https://opensource-demo.orangehrmlive.com");
+        d.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
+        d.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
+        d=new EventFiringDecorator<>(new EventHandler()).decorate(d);
+    }
+
+    @Test
+    void tc1(){
+        et=er.createTest("TC1");
+        d.findElement(By.name("username")).sendKeys("Admin");
+        d.findElement(By.name("password")).sendKeys("admin123");
+        d.findElement(By.xpath("//button[@type='submit']")).click();
+        et.pass("Login successfull");
+    }
+
+    @Test
+    void tc2()throws IOException{
+        et=er.createTest("TC2");
+        d.findElement(By.name("username")).sendKeys(get("sheet",0,0));
+        d.findElement(By.name("password")).sendKeys(get("sheet",1,0));
+        d.findElement(By.xpath("//button[@type='submit']")).click();
+        et.pass("Execute Invalid credential");
+    }
+
+    @AfterMethod
+    public void end(){
+        if(d!=null)d.quit();
+        er.flush();
+    }
+}

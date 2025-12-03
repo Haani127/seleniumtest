@@ -1,0 +1,71 @@
+package runner;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.Duration;
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.io.FileHandler;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.events.*;
+import org.testng.annotations.*;
+import lombok.val;
+import org.apache.poi.ss.usermodel.*;
+import utils.EventHandler;
+import utils.ExcelReader;
+
+public class TestRunner {
+public static WebDriver driver;
+
+@BeforeMethod
+public WebDriver beforeMethod() throws MalformedURLException {
+ChromeOptions chromeOptions = new ChromeOptions();
+driver = new RemoteWebDriver(new URL("http://localhost:4444/"), chromeOptions);
+driver.get("https://www.firstcry.com/");
+driver.manage().window().maximize();
+driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+WebDriverListener listener = new EventHandler();
+driver = new EventFiringDecorator<>(listener).decorate(driver);
+driver.manage().window().maximize();
+return driver;
+}
+
+@Test
+void testcase1() throws IOException {
+String filepath = System.getProperty("user.dir") + "/Excel/sheet1.xlsx";
+String value = ExcelReader.readdata(filepath, "sheet1", 0, 0);
+WebElement search = driver.findElement(By.xpath("//input[@id='search_box']"));
+search.click();
+search.sendKeys(value, Keys.ENTER);
+}
+
+@Test
+void testcase2() throws IOException {
+String filepath = System.getProperty("user.dir") + "/Excel/sheet1.xlsx";
+String value = ExcelReader.readdata(filepath, "sheet1", 1, 0);
+WebElement search = driver.findElement(By.xpath("//input[@id = 'search_box']"));
+search.click();
+search.sendKeys(value, Keys.ENTER);
+driver.findElement(By.xpath("/html/body/div[5]/div[2]/div/div[1]/div[3]/div[2]/div[1]/div[2]/div[2]/ul/li[4]"))
+.click();
+}
+
+@Test
+void testcase3() throws IOException {
+String filepath = System.getProperty("user.dir") + "/Excel/sheet1.xlsx";
+String value = ExcelReader.readdata(filepath, "sheet1", 2, 0);
+WebElement search = driver.findElement(By.xpath("//input[@id = 'search_box']"));
+search.click();
+search.sendKeys(value, Keys.ENTER);
+driver.findElement(By.xpath("//div[@id='9942459'][contains(text(),'ADD TO CART')][1]")).click();
+TakesScreenshot ts = (TakesScreenshot) driver;
+FileHandler.copy(ts.getScreenshotAs(OutputType.FILE), new File("Screenshot.png"));
+}
+@AfterMethod
+public void tearDown() {
+if (driver != null) {
+driver.quit();
+}
+}
+}

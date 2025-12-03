@@ -1,0 +1,85 @@
+package runner;
+
+import org.openqa.selenium.By;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+
+import utils.Base;
+import utils.LoggerHandler;
+import utils.Reporter;
+import utils.Screenshot;
+import utils.WebDriverHelper;
+
+public class TestRunner extends Base {
+    WebDriverHelper helper;
+    ExtentReports reports = Reporter.generateExtentReport();
+    ExtentTest test;
+
+    @BeforeMethod
+    public void set() {
+        openBrowser();
+        helper = new WebDriverHelper(driver);
+        test = reports.createTest("test");
+    }
+
+    @AfterMethod
+    public void quit() {
+        driver.quit();
+    }
+
+    @Test
+    void test1() {
+        helper.hoverOverElement(By.xpath("//span[contains(.,'Company')]"));
+        helper.clickOnElement(By.xpath("//a[@href='/about-us']"));
+        test.log(Status.PASS, "click on about us");
+        test.log(Status.PASS, "click on about us");
+        test.log(Status.PASS, "click on about us");
+        test.log(Status.PASS, "click on about us");
+        test.log(Status.PASS, "click on about us");
+        test.log(Status.PASS, "click on about us");
+        test.log(Status.PASS, "click on about us");
+        test.log(Status.PASS, "click on about us");
+        test.log(Status.PASS, "click on about us");
+        helper.clickOnElement(By.xpath("//*[@id=\"__next\"]/main/div[3]/div/div[2]/div/div/div[6]/a"));
+        test.log(Status.PASS, "click on about us");
+        helper.switchToNewWindow();
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        helper.clickOnElement(By.xpath("//*[@id=\"main__Header\"]/div/div[2]/div[2]/button"));
+        Screenshot.captureScreenShot("city");
+    }
+
+    @Test
+    void test2() {
+        helper.hoverOverElement(By.xpath("//span[contains(.,'Contact')]"));
+        helper.sendKeys(By.name("message"), "mumbai");
+        Reporter.attachScreenshotToReport("contact_screenshot", test, "contact_screenshot");
+    }
+
+    @Test
+    void test3() {
+        helper.clickOnElement(By.xpath("//*[@href=\"/privacy-policy\"]"));
+        helper.switchToNewWindow();
+        helper.clickOnElement(By.xpath("//*[@id=\"__next\"]/main/div[3]/div/div[1]/div[1]/div[1]"));
+        Screenshot.captureScreenShot("subscribe");
+    }
+
+    @AfterClass
+    public void flush() {
+        reports.flush();
+    }
+}

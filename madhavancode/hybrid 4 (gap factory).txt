@@ -1,0 +1,78 @@
+package runner;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+
+import utils.Base;
+import utils.LoggerHandler;
+import utils.Reporter;
+import utils.Screenshot;
+import utils.WebDriverHelper;
+
+public class TestRunner extends Base {
+    WebDriverHelper helper;
+    ExtentReports reports = Reporter.generateExtentReport();
+    ExtentTest test;
+
+    @BeforeMethod
+    public void set() {
+        openBrowser();
+        driver.navigate().refresh();
+        helper = new WebDriverHelper(driver);
+        test = reports.createTest("test");
+    }
+
+    @Test
+    public void test1() {
+        helper.sendKeys(By.xpath("//input[@placeholder=\"Search\"]"), "Shorts");
+        helper.sendKeys(By.xpath("//input[@placeholder=\"Search\"]"), "\n");
+        helper.clickOnElement(By.xpath("//*[@id=\"fds_drawer-_R_pkkslubsnqbtb_\"]/div[1]/div[2]/div/div/div/div[1]/button/div[1]/div/span"));
+        helper.clickOnElement(By.id("new-label"));
+        test.log(Status.PASS, "click on New");
+        Screenshot.captureScreenShot("shorts");
+    }
+
+    @Test
+    public void test2() {
+        helper.hoverOverElement(By.xpath("//a[@aria-label=\"girls\"]"));
+        helper.clickOnElement(By.xpath("//*[@id=\"category_1041712\"]/a/span"));
+        helper.clickOnElement(By.id("promo-drawer-button"));
+        helper.clickOnElement(By.xpath("//*[@id=\"promoDrawer__contentWrapper\"]/div[2]/div[2]/button[1]"));
+        LoggerHandler.info("click on tap to apply");
+        LoggerHandler.info("click on tap to apply");
+        LoggerHandler.info("click on tap to apply");
+        LoggerHandler.info("click on tap to apply");
+        LoggerHandler.info("click on tap to apply");
+        LoggerHandler.info("click on tap to apply");
+        helper.clickOnElement(By.xpath("//span[contains(.,'Applied at checkout')]"));
+        Screenshot.captureScreenShot("jeans");
+    }
+
+    @Test
+    public void test3() {
+        helper.clickOnElement(By.xpath("//a[contains(.,'Privacy Policy')]"));
+        helper.switchToNewWindow();
+        helper.hoverOverElement(By.xpath("//a[@href=\"/en-us/careers\"]"));
+        helper.clickOnElement(By.xpath("//a[@href=\"/en-us/careers/gap-inc-careers\"]"));
+        Reporter.attachScreenshotToReport("gapfactory_screenshot", test, "gapfactory_screenshot");
+    }
+
+    @AfterMethod
+    public void quit() {
+        driver.quit();
+    }
+
+    @AfterClass
+    public void flush() {
+        reports.flush();
+    }
+}

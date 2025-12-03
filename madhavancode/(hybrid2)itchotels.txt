@@ -1,0 +1,53 @@
+package runner;
+import java.time.Duration;
+import org.openqa.selenium.By;
+import org.testng.annotations.*;
+import com.aventstack.extentreports.*;
+import utils.*;
+
+public class TestRunner extends Base{
+    public ExtentReports reports; public ExtentTest test; public WebDriverHelper helper;
+
+    @BeforeMethod void setup(){
+        openBrowser(); helper=new WebDriverHelper(driver);
+        reports=Reporter.generateExtentReport("report");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(50));
+    }
+
+    @Test void testcase1(){
+        test=reports.createTest("Test case 1");
+        helper.clickOnElement(By.xpath("//button[@id='onetrust-pc-btn-handler']"));
+        LoggerHandler.info("click on know more");
+        Screenshot.captureScreenShot("itchotel_screenshot");
+        Reporter.attachScreenshotToReport("itchotel_screenshot",test,"Verfied");
+    }
+
+    @Test void testcase2(){
+        test=reports.createTest("Test case 2");
+        helper.javascriptScroll(By.xpath("//div[@id='footer-accordion__content_5']"));
+        helper.clickOnElement(By.xpath("//div[@id='footer-accordion__content_5']//ul//li[2]"));
+        helper.clickOnElement(By.xpath("//div[@class='aem-GridColumn aem-GridColumn--default--9 aem-GridColumn--phone--9']//p[2]//a"));
+        helper.switchToNewWindow();
+        helper.javascriptScroll(By.xpath("//*[@id='footer-accordion__content_2']/ul/li[5]"));
+        helper.clickOnElement(By.xpath("//*[@id='footer-accordion__content_2']/ul/li[5]"));
+        Screenshot.captureScreenShot("itchotel_screenshot1");
+        Reporter.attachScreenshotToReport("itchotel_screenshot1",test,"Verfied");
+    }
+
+    @Test void testcase3(){
+        test=reports.createTest("Test case 3");
+        helper.javascriptScroll(By.xpath("//*[@id='footer-accordion__content_3']/ul/li[1]/ul/li[1]"));
+        helper.clickOnElement(By.xpath("//*[@id='footer-accordion__content_3']/ul/li[1]/ul/li[1]"));
+        helper.clickOnElement(By.xpath("//nav[@class='header-prime__links']/ul/li[6]"));
+        helper.clickOnElement(By.xpath("//div[@class='itc-login__before-login']/a[2]"));
+        helper.sendKeys(By.xpath("//div[@class='textField-element field-flex-full']//input"),"abcd@gmail.com");
+        helper.sendKeys(By.xpath("//div[@class='textField-element position-relative field-flex-full']//input"),"abcd");
+        test.log(Status.PPASS,"hover on signin");
+        helper.clickOnElement(By.xpath("//div[@class='login-form__cta-area']//button"));
+        Screenshot.captureScreenShot("itchotel_screenshot2");
+        Reporter.attachScreenshotToReport("itchotel_screenshot2",test,"Verified");
+    }
+
+    @AfterMethod void down(){driver.quit();}
+    @AfterTest void donw(){reports.flush();}
+}

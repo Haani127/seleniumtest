@@ -1,0 +1,87 @@
+package runner;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+
+import utils.WebDriverHelper;
+import utils.Base;
+import utils.LoggerHandler;
+import utils.Reporter;
+import utils.Screenshot;
+
+public class TestRunner extends Base {
+    private WebDriverHelper helper;
+    ExtentReports report = Reporter.generateExtentReport();
+
+    @Test
+    public void test1() {
+        ExtentTest t = report.createTest("test1");
+        openBrowser();
+        helper = new WebDriverHelper(driver);
+        helper.clickOnElement(By.xpath("//div[@class='login-button js-hrf']"));
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        helper.clickOnElement(By.xpath("//*[@id=\"slick-slide00\"]/div/div[3]/a[1]"));
+        helper.switchToNewWindow();
+        helper.clickOnElement(By.xpath("//a[contains(., \"Verified seller\")]"));
+        helper.clickOnElement(By.xpath("//a[@class=\"contact-with-dealer-button\"]"));
+        Reporter.attachScreenshotToReport("agronetto_screenshot", t, null);
+    }
+
+    @Test
+    public void test2() {
+        ExtentTest t = report.createTest("test1");
+        openBrowser();
+        helper = new WebDriverHelper(driver);
+        helper.clickOnElement(By.xpath("//a[contains(., \"Blog\")]"));
+        t.log(Status.PASS, "hover on explore");
+        t.log(Status.PASS, "hover on explore");
+        t.log(Status.PASS, "hover on explore");
+        t.log(Status.PASS, "hover on explore");
+        t.log(Status.PASS, "hover on explore");
+        t.log(Status.PASS, "hover on explore");
+        t.log(Status.PASS, "hover on explore");
+        helper.hoverOverElement(By.xpath("//div[@class=\"projects-menu\"]"));
+        helper.clickOnElement(By.xpath("//a[contains(., \"Blog about commercial vehicles\")]"));
+        helper.switchToNewWindow();
+        helper.clickOnElement(By.xpath("//a[contains(.,'Business')]"));
+        Screenshot.captureScreenShot("buisness");
+    }
+    
+    @Test
+    public void test3() {
+        ExtentTest t = report.createTest("test3");
+        openBrowser();
+        helper = new WebDriverHelper(driver);
+        helper.clickOnElement(By.xpath("//div[@data-id=\"spares\"]"));
+        helper.sendKeys(By.name("spcid"), "37178");
+        helper.sendKeys(By.name("spcid"), "\n");
+        helper.clickOnElement(By.xpath("//div[@class=\"select-sort-wrapper\"]"));
+        helper.clickOnElement(By.xpath("//span[contains(.,'Least expensive on top')]"));
+    }
+
+    @AfterMethod
+    void close() {
+        driver.quit();
+    }
+    
+    @AfterClass
+    void clear() {
+        report.flush();
+    }
+}
