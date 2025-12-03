@@ -1,0 +1,101 @@
+package runner;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+
+import utils.*;
+
+public class TestRunner extends Base {
+    private static WebDriverHelper helper;
+    private ExtentReports extend;
+    private  ExtentTest test;
+
+    @BeforeSuite
+    void suit(){
+        extend = new ExtentReports();
+        ExtentSparkReporter reports = new ExtentSparkReporter("./reports/report/html");
+        extend.attachReporter(reports);
+    }
+    @BeforeMethod
+    public void jyhghy() {
+        openBrowser();
+        helper = new WebDriverHelper(driver);
+        driver.manage().window().maximize();
+    }
+
+    @Test
+    public void testCase1() throws InterruptedException {
+        test = extend.createTest("Test case1");
+        driver.findElement(By.xpath("//*[@id=\"container\"]/div[1]/header/div/div/div[4]/div[2]")).click();
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("click on signin");
+        LoggerHandler.info("hover on explore");
+        LoggerHandler.info("click on signin");
+        test.log(Status.PASS , "hover on explore");
+        helper.clickOnElement(By.xpath("//div[@class = 'portal-info']//a"));
+        helper.clickOnElement(By.xpath("//div[@class = 'our-companies-list']//a[1]"));
+        String parent = driver.getWindowHandle();
+        for (String handle : driver.getWindowHandles()) {
+            if (!handle.equals(parent)) {
+                driver.switchTo().window(handle);
+                break;
+            }
+        }
+        helper.clickOnElement(By.xpath("//a[contains(text() , 'Verified seller')]"));
+        helper.clickOnElement(By.xpath("//a[@class = 'contact-with-dealer-button']"));
+        Screenshot.captureScreenShot("agronetto_screenshot");
+        Reporter.attachScreenshotToReport("agronetto_screenshot", test, "agronetto");
+    }
+
+    @Test
+    public void testCase2() {
+        test = extend.createTest("Test case2");
+        helper.clickOnElement(By.xpath("//div[@class = 'links']//span[5]"));
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        test.pass("click on Blog");
+        helper.hoverOverElement(By.xpath("//div[@class = 'elementor-shortcode']"));
+        helper.clickOnElement(By.xpath("//*[@id=\"menu-item-1535\"]/a"));
+        helper.switchToNewWindow();
+        helper.clickOnElement(By.xpath("//*[@id=\"menu-item-1582\"]/a"));
+    }
+
+    @Test
+    public void testCase3() {
+        helper.clickOnElement(By.xpath("//div[@class = 'detailed-menu-header__inner']/div[4]"));
+        driver.findElement(By.xpath("//input[@name = 'spcid']")).sendKeys("37178", Keys.ENTER);
+        helper.clickOnElement(By.xpath("//div[@class = 'sl-header-button__content']//span[2]"));
+        helper.clickOnElement(By.xpath("//div[@class = 'sl-orders-select-dropdown']//span[3]"));
+    }
+
+    @AfterMethod
+    void down() {
+        driver.quit();
+    }

@@ -1,0 +1,43 @@
+package runner;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+
+import utils.Base;
+import utils.Reporter;
+import utils.Screenshot;
+import utils.WebDriverHelper;
+
+public class TestRunner extends Base {
+    WebDriverHelper helper;
+    @AfterMethod
+    public void launchBrowser() {
+        driver.quit();
+    }
+
+    @Test
+    public void testOne() throws Exception {
+        helper.clickOnElement(By.xpath("/html/body/footer/div/div[2]/nav/ul/li[10]/a"));
+        helper.switchToNewWindow();
+        helper.clickOnElement(By.xpath("//h3[contains(text(), 'BMW Drive Recorder')]"));
+        Screenshot.getScreenShot(driver, "bmw");
+        Logger logger = Logger.getLogger(getClass());
+        logger.info("bmw");
+        ExtentReports reports = Reporter.generateExtentReport("rep");
+        reports.flush();
+     }
+
+    @BeforeMethod
+    public void tearDown() throws MalformedURLException {
+        openBrowser();
+        helper = new WebDriverHelper(driver);
+    }
+}

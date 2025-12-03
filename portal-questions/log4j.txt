@@ -1,0 +1,70 @@
+package runner;
+
+import java.net.URL;
+import java.time.Duration;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.events.EventFiringDecorator;
+import org.openqa.selenium.support.events.WebDriverListener;
+import org.testng.annotations.Test;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import utils.EventHandler;
+
+public class TestAmazon {
+    public static WebDriver driver;
+    public static int IMPLICIT_WAIT_TIME =10;
+    public static int  PAGE_LOAD_TIME =15;
+    private static final Logger logger = Logger.getLogger(TestAmazon.class);
+   
+
+    public void openBrowser() throws Throwable {
+        DesiredCapabilities dc = new DesiredCapabilities();
+        dc.setBrowserName("chrome");
+       
+        driver = new RemoteWebDriver(new URL("http://localhost:4444/"), dc);
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(IMPLICIT_WAIT_TIME));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(PAGE_LOAD_TIME));
+        WebDriverListener listener = new EventHandler();
+        driver = new EventFiringDecorator<>(listener).decorate(driver);
+    }
+
+    @Test
+    public void logTest(){
+        logger.info("Logging test");
+    }
+}
+
+
+//FILE---------
+
+
+log4j.rootLogger = INFO , FILE_A , FILE_B , FILE_C , FILE_D
+
+log4j.appender.FILE_A = org.apache.log4j.RollingFileAppender
+log4j.appender.FILE_A.File = logs/pattern_a.log
+log4j.appender.FILE_A.layout = org.apache.log4j.PatternLayout
+log4j.appender.FILE_A.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} %p %c %m%n
+
+log4j.appender.FILE_B = org.apache.log4j.RollingFileAppender
+log4j.appender.FILE_B.File = logs/pattern_b.log
+log4j.appender.FILE_B.layout = org.apache.log4j.PatternLayout
+log4j.appender.FILE_B.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} %p %c{2} %m%n
+
+log4j.appender.FILE_C = org.apache.log4j.RollingFileAppender
+log4j.appender.FILE_C.File = logs/pattern_c.log
+log4j.appender.FILE_C.layout = org.apache.log4j.PatternLayout
+log4j.appender.FILE_C.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} %p %c %C %M -> %m
+
+log4j.appender.FILE_D = org.apache.log4j.RollingFileAppender
+log4j.appender.FILE_D.File = logs/pattern_d.log
+log4j.appender.FILE_D.layout = org.apache.log4j.PatternLayout
+log4j.appender.FILE_D.layout.ConversionPattern = %r %p %L %m
+
+//CONSOLE---------------
+
+#log4j.appender.CONSOLE = org.apache.log4j.ConsoleAppender
+#log4j.appender.CONSOLE.layout = org.apache.log4j.PatternLayout
+#log4j.appender.CONSOLE.layout.ConversionPattern =  %d{yyyy-MM-dd HH:mm:ss} %p %c %m%n

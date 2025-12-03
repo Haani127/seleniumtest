@@ -1,0 +1,75 @@
+package runner;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.testng.annotations.*;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+
+import utils.*;
+
+public class TestRunner extends Base {
+    WebDriverHelper helper;
+    ExtentReports reports = Reporter.generateExtentReport("ginger");
+    ExtentTest test;
+    @BeforeMethod
+    public void setup() {
+        openBrowser();
+        driver.get("https://www.ihcltata.com/");
+        helper = new WebDriverHelper(driver);
+    }
+
+    @Test
+    public void test1() throws InterruptedException {
+        test = reports.createTest("test1");
+        helper.hoverOverElement(By.xpath("//span[contains(text(),'Company')][1]"));
+        helper.clickOnElement(By.xpath("//a[@href='/about-us']"));
+        test.log(Status.PASS, "click on about us");
+        helper.hoverOverElement(By.xpath("//span[contains(text(),'Brand')][1]"));
+        helper.clickOnElement(By.xpath("//a[contains(text(), 'Ginger')]"));
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        LoggerHandler.info("click on ginger");
+        helper.switchToNewWindow();
+        Thread.sleep(3000);
+        helper.clickOnElement(By.xpath("//button[contains(., 'Book Your Stay')][1]"));
+        Screenshot.captureScreenShot("screenshots");
+    }
+
+    @Test
+    public void test2() {
+        test = reports.createTest("Test2");
+        helper.hoverOverElement(By.xpath("//span[contains(text(),'Contact')][1]"));
+        helper.clickOnElement(By.xpath("//span[contains(text(),'Contact')][1]"));
+        helper.switchToNewWindow();
+        helper.sendKeys(By.name("firstname"), "Mumbai");
+        Reporter.attachScreenshotToReport("contact_screenshot", test, "Worldwide");
+    }
+
+    @Test
+    public void test3() {
+        helper.clickOnElement(By.xpath("//a[@href=\"/privacy-policy\"]"));
+        helper.switchToNewWindow();
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("arguments.textContent = 'SUBSCRIBE';", driver.findElement(By.xpath("By.xpath(\"//p[contains(text(), 'Subscribe')]\")")));
+        helper.clickOnElement(By.xpath("//p[contains(text(), 'Subscribe')]"));
+        Screenshot.captureScreenShot("Subscribe");
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    @AfterClass
+    public void flush() {
+        reports.flush();
+    }
+}

@@ -1,0 +1,49 @@
+//screenshot
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+
+ File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+ FileUtils.copyFile(src, new File("src/test/screenshots/dummy.png"));
+
+//next
+
+
+
+
+//excel
+
+public String getExcelData(int rowidx, int colIdx) throws IOException {
+        FileInputStream file = new FileInputStream("./testData/excel.xlsx");
+        try (Workbook workbook = new XSSFWorkbook(file)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.getRow(rowidx);
+            Cell cell = row.getCell(colIdx);
+            return cell.getStringCellValue();
+        }
+}
+
+//properties
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+public class ConfigReader {
+    Properties prop;
+
+    public ConfigReader() {
+        try {
+            prop = new Properties();
+            FileInputStream fis = new FileInputStream("config.properties");
+            prop.load(fis);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getProperty(String key) {
+        return prop.getProperty(key);
+    }
+}

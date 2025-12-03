@@ -1,0 +1,137 @@
+package Test_Abhibus;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.Key;
+import java.time.Duration;
+
+import org.apache.log4j.Logger;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.events.EventFiringDecorator;
+import org.openqa.selenium.support.events.WebDriverListener;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+
+import java_cup.runtime.lr_parser;
+import utils.EventHandler;
+import utils.Reporter;
+import utils.Screenshot;
+
+public class Test_abhibus{
+public static WebDriver driver;
+    public static ExtentSparkReporter reporter;
+public static ExtentReports report;
+
+public static ExtentTest test;
+
+ @BeforeMethod
+    public WebDriver beforeMethod() throws MalformedURLException , InterruptedException {
+ChromeOptions chromeOptions = new ChromeOptions();
+driver = new RemoteWebDriver(new URL("http://localhost:4444/"), chromeOptions);
+driver.get("https://www.abhibus.com/");
+driver.manage().window().maximize();
+Thread.sleep(3000);
+driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+WebDriverListener listener = new EventHandler();
+driver = new EventFiringDecorator<>(listener).decorate(driver);
+return driver;
+       
+    }
+
+@BeforeTest
+public void beforetest()
+{
+
+   
+   reporter  = new ExtentSparkReporter("./reports/ExtentReport.html");  
+   report = new ExtentReports();
+   report.attachReporter(reporter);
+
+}
+
+@Test
+public void test() throws IOException, InterruptedException
+{
+test = report.createTest("Test1-created");
+test.log(Status.INFO, "opening the browser");
+driver.findElement(By.xpath("//a/span[text()='Trains']")).click();
+Thread.sleep(3000);
+test.log(Status.INFO,"Train-button clicked");
+
+String url = driver.getCurrentUrl();
+Assert.assertTrue(url.contains("trains"));
+driver.findElement(By.xpath("//div[@class=\"ctkt-logo\"]//a/img")).click();
+Thread.sleep(3000);
+test.log(Status.INFO,"gone to home page");
+
+driver.findElement(By.xpath("//span[text()='Login/SignUp']")).click();
+Thread.sleep(3000);
+
+String title = driver.findElement(By.xpath("//h4[text()='Login to AbhiBus']")).getText();
+Assert.assertTrue(title.contains("Login to AbhiBus"));
+
+test.log(Status.INFO, "checked the element contains Login ");
+
+test.addScreenCaptureFromPath(Screenshot.getScreenShot(driver, "image"));
+     
+}
+
+@Test
+public void testtwo() throws InterruptedException{
+test = report.createTest("Test2 - created");
+WebElement from = driver.findElement(By.xpath("(//input[@type='text'])[1]"));
+from.sendKeys("Mumbai");
+Thread.sleep(3000);
+
+from.sendKeys(Keys.ENTER);
+WebElement to = driver.findElement(By.xpath("(//input[@type='text'])[2]"));
+to.sendKeys("Pune");
+Thread.sleep(3000);
+to.sendKeys(Keys.ENTER);
+Thread.sleep(3000);
+driver.findElement(By.id("search-button")).click();
+Thread.sleep(3000);
+String url = driver.getCurrentUrl();
+Assert.assertTrue(url.contains("Mumbai") && url.contains("Pune"));
+}
+@Test
+public void testthree() throws InterruptedException, IOException{
+
+test = report.createTest("Test3-created");
+driver.findElement(By.xpath("//a[text()='Quick Links']")).click();
+Thread.sleep(3000);
+driver.findElement(By.xpath("//a[text()='News']")).click();
+Thread.sleep(3000);
+String title = driver.findElement(By.xpath("//h2[text()='Media']")).getText();
+Assert.assertTrue(title.contains("Media"));
+String dest = Screenshot.getScreenShot(driver, "image2");
+test.addScreenCaptureFromPath(dest);
+
+}
+
+@AfterMethod
+public void AfterMethod(){
+driver.quit();
+}
+@AfterTest
+public void aftertest(){
+report.flush();
+}
+
+
+}
