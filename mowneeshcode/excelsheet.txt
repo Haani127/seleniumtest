@@ -1,0 +1,104 @@
+package first;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.events.EventFiringDecorator;
+import org.openqa.selenium.support.events.WebDriverListener;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+
+import java.net.URL;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.time.Duration;
+import com.aventstack.extentreports.*;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+
+public class TestPageExcelFetching {
+        public WebDriver driver;
+        public ExtentReports extend;
+        public ExtentTest test;
+        public ExtentSparkReporter spark;
+
+        @BeforeClass
+        void settingup() {
+            spark = new ExtentSparkReporter("./reports/ExtendReport.html");
+            extend = new ExtentReports();
+            extend.attachReporter(spark);
+        }
+
+        @BeforeMethod
+        public void setUp() {
+           driver = new ChromeDriver();
+           driver.manage().window().maximize();
+            driver.get("https://opensource-demo.orangehrmlive.com/");
+
+        }
+
+        public String getExcelData(int rowidx, int colIdx) throws IOException {
+            FileInputStream file = new FileInputStream("D:\\Training\\practice\\java\\softwareTesting\\src\\main\\data\\data.xlsx");
+            try (Workbook workbook = new XSSFWorkbook(file)) {
+                Sheet sheet = workbook.getSheetAt(0);
+                Row row = sheet.getRow(rowidx);
+                Cell cell = row.getCell(colIdx);
+                return cell.getStringCellValue();
+            }
+        }
+
+        @Test
+        public void test1() throws IOException {
+            test = extend.createTest("Test1 - valid Login");
+//            String username = getExcelData(0, 0);
+//            String password = getExcelData(1, 0);
+            String username = "Admin";
+            String password = "admin123";
+            driver.findElement(By.name("username")).sendKeys(username);
+            driver.findElement(By.name("password")).sendKeys(password);
+            driver.findElement(By.cssSelector("button[type='submit']")).click();
+            String text = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/div[1]/header/div[1]/div[1]")).getText();
+            String expected = "Dashboard";
+            Assert.assertEquals(text, expected);
+            test.pass("login success" + text);
+        }
+
+        @Test
+        public void test2() throws IOException {
+            test = extend.createTest("Test2 - invalid login");
+//            String username = getExcelData(0, 0);
+//            String password = getExcelData(1, 0);
+            String username = "admin";
+            String password = "jeeva123";
+            driver.findElement(By.name("username")).sendKeys(username);
+            driver.findElement(By.name("password")).sendKeys(password);
+            driver.findElement(By.cssSelector("button[type='submit']")).click();
+            String text = driver.findElement(By.xpath("//p[contains(text() , '')]")).getText();
+            String expected = "Invalid credentials";
+            Assert.assertEquals(text, expected);
+            test.pass("successfully shown " + text);
+        }
+
+        @AfterMethod
+        public void teardown() {
+            if (driver != null) {
+                driver.quit();
+            }
+        }
+
+        @AfterClass
+        void extendDown(){
+            if(extend != null){
+                extend.flush();
+            }
+        }
+
+    }
