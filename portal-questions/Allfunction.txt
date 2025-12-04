@@ -55,7 +55,13 @@ public class TestSample {
             // 6. Dismiss the alert
             Alert alert2 = driver.switchTo().alert();
             alert2.dismiss();
-        
+
+            //Hover on hello signin
+            WebElement hoverElement = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("/html/body/div[1]/header/div/div[1]/div[3]/div/div[2]/a/div/span")));
+            Actions actions = new Actions(driver);
+            actions.moveToElement(hoverElement).perform();
+            Thread.sleep(2000);
+            
         } 
         catch (MalformedURLException e) {
             e.printStackTrace();
