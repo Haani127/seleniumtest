@@ -1,0 +1,42 @@
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.Alert;
+import org.junit.Assert; // Import JUnit's Assert
+
+public class AmazonAssertAlertActions {
+    public static void main(String[] args) throws InterruptedException {
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+
+        driver.get("https://www.amazon.in/");
+
+        // ACTIONS example: Hover over the 'Hello, sign in'
+        Actions actions = new Actions(driver);
+        WebElement signinMenu = driver.findElement(By.id("nav-link-accountList"));
+        actions.moveToElement(signinMenu).perform();
+
+        // -- ALERT accept example --
+        ((JavascriptExecutor) driver).executeScript("alert('Accept this alert!');");
+        Alert alert = driver.switchTo().alert();
+        Thread.sleep(1500); // Wait for visibility (only for demonstration)
+        alert.accept(); // Accept the alert (OK)
+
+        // -- ALERT dismiss example (need to trigger another alert) --
+        ((JavascriptExecutor) driver).executeScript("confirm('Dismiss this alert!');");
+        Alert confirmAlert = driver.switchTo().alert();
+        Thread.sleep(1500); // Wait for visibility (only for demonstration)
+        confirmAlert.dismiss(); // Dismiss the alert (Cancel)
+
+        // ASSERT using getText() and contains
+        WebElement element = driver.findElement(By.id("nav-link-accountList-nav-line-1"));
+        String actualText = element.getText();
+        String expectedPartialText = "Hello"; // Change as needed
+        // Hard assertion (stops execution if it fails)
+        Assert.assertTrue("String did not contain the required text.", actualText.contains(expectedPartialText));
+
+        System.out.println("Assertion passed! Page element text = " + actualText);
+
+        driver.quit();
+    }
+}
