@@ -62,6 +62,25 @@ public class TestSample {
             actions.moveToElement(hoverElement).perform();
             Thread.sleep(2000);
             
+            //navigate back to home page
+            driver.navigate().back();
+
+            //Window handling (parent to child and then child to parent)
+            String parentWindow = driver.getWindowHandle();
+            wait.until(ExpectedConditions.numberOfWindowsToBe(2));
+            Set<String> allWindows = driver.getWindowHandles();
+            
+            //Switch to child window
+            for(String window : allWindows) {
+                if(!window.equals(parentWindow)) {
+                    driver.switchTo().window(window);
+                    break;
+                }
+            }
+            Thread.sleep(2000);
+            
+            //Switch back to parent window
+            driver.switchTo().window(parentWindow);
         } 
         catch (MalformedURLException e) {
             e.printStackTrace();
